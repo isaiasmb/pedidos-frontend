@@ -1,0 +1,19 @@
+.logo i {
+    margin-right: 5px;
+}
+
+.copy {
+    margin-left: 5px;
+}
+
+.footer-buttons, .table-buttons, .modal-buttons {
+    float: right;
+}
+
+table button, form button, .modal-buttons button {
+    margin-left: 10px;
+}
+
+.table-buttons {
+    width: 100px;
+}
