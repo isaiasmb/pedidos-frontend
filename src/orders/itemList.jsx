@@ -15,7 +15,7 @@ class ItemList extends Component {
         super();
 
         this.state = {
-            profitability: ''
+            profitability: ""
         };
 
         this.updateProfitability = this.updateProfitability.bind(this);
