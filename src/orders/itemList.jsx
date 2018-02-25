@@ -7,7 +7,7 @@ import Grid from '../template/layout/grid'
 import Select from '../form/select'
 import Input from '../form/input'
 import { loadProducts } from '../products/productActions'
-import { required, requiredSelect } from '../form/formUtils'
+import { required, requiredSelect, formatMoney, parseMoney } from '../form/formUtils'
 
 class ItemList extends Component {
 
@@ -34,17 +34,20 @@ class ItemList extends Component {
         return items.map((item, index) => (
             <tr key={index}>
                 <td>
-                    <Field name={`items[${index}].product.id`} 
+                    <Field name={`items[${index}].product.id`}
                         parse={value => Number(value)} component={Select}
                         defaultValue={0} value={this.props.product}
-                        cols='12 12' options={this.createOptionsProducts(index)}
+                        options={this.createOptionsProducts(index)}
                         labelDefaultOptions='Selecione um produto'
-                        validate={[required]} />    
+                        validate={[required]} />
                 </td>
                 <td><Field name={`items[${index}].amount`} component={Input} validate={[required]} /></td>
                 <td>
                     <Field name={`items[${index}].unitPrice`} 
-                        component={Input} validate={[required]} />
+                        format={value => formatMoney(value)}
+                        parse={value => parseMoney(value)}
+                        component={Input} 
+                        validate={[required]} />
                 </td>
                 <td><Field readOnly={true} name={`items[${index}].profitability`} component={Input} format={value => this.formatProfitability(value)} /></td>
                 <td>
@@ -62,15 +65,13 @@ class ItemList extends Component {
     }
 
     formatProfitability(value) {
-        switch(value) {
+        switch (value) {
             case 'GREAT':
                 return "Ótima";
             case "GOOD":
                 return "Boa";
             case "BAD":
                 return "Ruim";
-            default:
-                return "";
         }
     }
 
@@ -85,11 +86,11 @@ class ItemList extends Component {
     }
 
     createOptionsProducts(index) {
-        const currentItems = this.props.items.length > 0 ? this.props.items : [{product:{id:null}}];
+        const currentItems = this.props.items.length > 0 ? this.props.items : [{ product: { id: null } }];
         const products = this.props.products || [];
         return products.map(product => (
-            <option key={product.id} value={product.id} 
-                    selected={currentItems[index].product !== undefined && product.id == currentItems[index].product.id}>
+            <option key={product.id} value={product.id}
+                selected={currentItems[index].product !== undefined && product.id == currentItems[index].product.id}>
                 {product.name} - {product.unitPrice}
             </option>
         ));
@@ -120,13 +121,13 @@ class ItemList extends Component {
     }
 }
 const selector = formValueSelector('orderForm');
-const mapStateToProps = state => ({ 
+const mapStateToProps = state => ({
     products: state.product.products,
     items: selector(state, 'items')
 });
-const mapDispatchToProps = dispatch => bindActionCreators({ 
-    arrayInsert, 
+const mapDispatchToProps = dispatch => bindActionCreators({
+    arrayInsert,
     arrayRemove,
-    loadProducts 
+    loadProducts
 }, dispatch);
 export default connect(mapStateToProps, mapDispatchToProps)(ItemList);
